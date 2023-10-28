@@ -27,7 +27,8 @@ pip install -U transformers>=4.30 deepspeed xformers bitsandbytes>=0.39 accelera
 
 
 ## data sample
-   open_data https://github.com/ssbuild/open_data
+- open_data https://github.com/ssbuild/open_data
+- [prompt](PROMPT.md)
 
 数据示例
 例子依次分别是 对话，工具，代码执行，对话，对话
@@ -54,10 +55,6 @@ pip install -U transformers>=4.30 deepspeed xformers bitsandbytes>=0.39 accelera
 | INT8           | 10 GB              |
 | INT4           | 6 GB               |
 
-   
-
-![inference](data/1.png)
-![inference](data/2.png)
 
 
 
