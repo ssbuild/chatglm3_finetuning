@@ -1,5 +1,6 @@
 ### 天妒英才！人民的好总理，一路走好 !
 ```text
+    10-29 train and test pass
     10-28 initial chatglm3
 ```
    
