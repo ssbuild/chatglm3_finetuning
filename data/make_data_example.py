@@ -13,7 +13,7 @@ x0 = [
     },
     {
         "q": "Hello",
-        "a": "Hello, I'm ChatGLM3. What can I assist you today?"
+        "a": "\nHello, I'm ChatGLM3. What can I assist you today?"
     }
 ]
 
@@ -45,7 +45,7 @@ x1 = [
     },
     {
         "q": "今天北京的天气怎么样？",
-        "a": """好的，让我们来查看今天的天气
+        "a": """\n好的，让我们来查看今天的天气
 <|assistant|>get_current_weather
 ```python
 tool_call(location="beijing", unit="celsius")
@@ -190,7 +190,7 @@ plt.show()
 x3 = [
     {
         "q": "写一个诗歌，关于冬天",
-        "a":'\n'.join([
+        "a": "\n" + '\n'.join([
             "冬夜寂静冷，",
             "云在天边飘，", "冰封白雪上， ", "寒冷像一场雪。",
             " ",
@@ -211,7 +211,7 @@ x3 = [
 x4 = [
     {
         "q": "晚上睡不着应该怎么办",
-        "a": '\n'.join([
+        "a": "\n" + '\n'.join([
             "晚上睡不着可能会让你感到焦虑或不舒服,但以下是一些可以帮助你入睡的方法:",
             "",
             "1. 制定规律的睡眠时间表:保持规律的睡眠时间表可以帮助你建立健康的睡眠习惯,使你更容易入睡。尽量在每天的相同时间上床,并在同一时间起床。",
