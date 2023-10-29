@@ -89,6 +89,7 @@ class TokenIdsMaker:
                     "role": "system",
                     "content": q,
                 }
+                continue
             metadata, content, history = self.parse_history_from_answers(a,history)
             a_ids = self.build_chat_input(q,history=history)
             b_ids = self.tokenizer.encode(content)
