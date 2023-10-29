@@ -13,7 +13,7 @@ from fastdatasets.record import load_dataset as Loader, RECORD, WriterObject, gf
 from tqdm import tqdm
 from transformers import HfArgumentParser
 from data_processer import DataStrategy, TokenIdsMaker
-from aigc_zoo.model_zoo.chatglm3.llm_model import ChatGLMTokenizer,PetlArguments,ChatGLMConfig,build_masks_and_position_ids_glm
+from aigc_zoo.model_zoo.chatglm3.llm_model import ChatGLMTokenizer,PetlArguments,ChatGLMConfig
 from config import *
 
 assert train_info_args['max_seq_length'] > 20
@@ -41,7 +41,19 @@ def postprocess(text):
   # return text.replace("\\n", "\n").replace("\\t", "\t")
   return text
 
+def build_masks_and_position_ids_glm(batch_input_ids, ctxlens):
+    max_len = batch_input_ids.size(1)
+    batch_position_ids, batch_attention_mask = [], []
+    for input_ids,ctxlen in zip(batch_input_ids,ctxlens):
+        position_ids = list(range(0,max_len))
+        assert ctxlen <= max_len
+        attention_mask = [1] * ctxlen + [0] * (max_len - ctxlen)
+        batch_position_ids.append(torch.tensor(position_ids,dtype=torch.long))
+        batch_attention_mask.append(torch.tensor(attention_mask,dtype=torch.long))
 
+    batch_attention_mask = torch.stack(batch_attention_mask, dim=0)
+    batch_position_ids = torch.stack(batch_position_ids, dim=0)
+    return batch_attention_mask,batch_position_ids
 
 class NN_DataHelper(DataHelper):
     index = 1
