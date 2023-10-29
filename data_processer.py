@@ -57,7 +57,11 @@ class TokenIdsMaker:
                 content = content + "\n" + json.dumps(item["tools"], indent=4, ensure_ascii=False)
             input_ids.extend(self.build_single_message(item["role"], item.get("metadata", ""), content))
         input_ids.extend(self.build_single_message(role, "", query))
-        return self.tokenizer.encode(input_ids,  is_split_into_words=True)
+        history += [ {
+            "role": "user",
+            "content": query,
+        } ]
+        return self.tokenizer.encode(input_ids,  is_split_into_words=True),history
 
     def parse_history_from_answers(self, output, history):
         content = ""
@@ -89,11 +93,7 @@ class TokenIdsMaker:
                 continue
 
             metadata, content, history = self.parse_history_from_answers(a,history)
-            a_ids = self.build_chat_input(q,history=history)
-            history += [ {
-                "role": "user",
-                "content": q,
-            } ]
+            a_ids,history = self.build_chat_input(q,history=history)
             b_ids = self.tokenizer.encode(content)
             role_tokens = [ self.tokenizer.get_command("<|assistant|>") ] + self.tokenizer.encode(f"{metadata}\n")
             while len(a_ids) + len(b_ids) > max_seq_length - len(role_tokens) - 2:
