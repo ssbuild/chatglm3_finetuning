@@ -23,8 +23,9 @@ x0 = [
 x1 = [
     {
         "role": "system",
-        "q": """Answer the following questions as best as you can. You have access to the following tools:
-[
+        "q": """Answer the following questions as best as you can. You have access to the following tools:\n""",
+        "tools": """
+        [
     {
         "name": "get_current_weather",
         "description": "Get the current weather in a given location",
@@ -40,7 +41,8 @@ x1 = [
             "required": ["location"],
         },
     }
-]""",
+]
+""",
         "a": ""
     },
     {

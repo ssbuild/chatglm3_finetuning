@@ -90,58 +90,21 @@ class NN_DataHelper(DataHelper):
                 print(paragraph)
 
 
-            paragraph = [ (session.get("role","") ,preprocess(session[ 'q' ]),
+            paragraph = [ (session.get("role",""),session.get("tools",None) ,preprocess(session[ 'q' ]),
                            preprocess('\n'.join(session[ 'a' ])) if isinstance(session[ 'a' ], list) else preprocess(
                                session[ 'a' ]))
                           for session in paragraph ]
             sub = [ ]
             # 自行做模板
-            for (role , q, a) in paragraph:
+            for (role ,tools, q, a) in paragraph:
                 # 不是system prompt  answer 必须存在
                 if role != "system":
                     assert len(a), ValueError('answer cannot empty')
-                sub.append((role,q, a))
+                sub.append((role,tools,q, a))
             D.append(copy.deepcopy(sub))
             sub.clear()
         return D
 
-    def _get_messages(self, lines):
-        D = [ ]
-        for line_id, line in enumerate(lines):
-            jd = json.loads(line)
-            if not jd:
-                continue
-            conversations = jd[ 'conversations' ]
-            if line_id < 10:
-                print(conversations)
-
-            paragraph = [ ]
-            prefix = ''
-            pair = [ None, None , None ]
-            for m in conversations:
-                pair[ 0 ] = m[ "from" ]
-                if m[ "from" ] == 'user':
-                    pair[ 1 ] = preprocess(m[ "value" ])
-                elif m[ "from" ] == 'assistant':
-                    pair[ 2 ] = preprocess(m[ "value" ])
-                elif m[ "from" ] == 'system':
-                    prefix = preprocess(m[ "value" ])
-                else:
-                    raise NotImplemented
-
-                if pair[ 1 ] is not None and pair[ 2 ] is not None:
-                    paragraph.append(tuple(pair))
-                    pair[ 0 ], pair[ 1 ],pair[ 2 ] = None, None, None
-
-            sub = [ ]
-            # 自行做模板
-            for (role, q, a) in paragraph:
-                if role != "system":
-                    assert len(a), ValueError('answer cannot empty')
-                sub.append((role,q, a))
-            D.append(copy.deepcopy(sub))
-            sub.clear()
-        return D
 
     # 读取文件
     def on_get_corpus(self, files: typing.List, mode: str):
@@ -149,13 +112,7 @@ class NN_DataHelper(DataHelper):
         for file in files:
             with open(file, mode='r', encoding='utf-8', newline='\n') as f:
                 lines = f.readlines()
-            is_new = False
-            if len(lines) > 0:
-                is_new = 'conversations' in json.loads(lines[ 0 ])
-            if is_new:
-                D.extend(self._get_messages(lines))
-            else:
-                D.extend(self._get_paragraph(lines))
+            D.extend(self._get_paragraph(lines))
         return D
 
     def collate_fn(self,batch):
