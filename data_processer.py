@@ -20,8 +20,6 @@ class TokenIdsMaker:
         self.pad_token_id = self.tokenizer.get_command("<pad>")
         self.eos_token_id = self.tokenizer.get_command("<eos>")
 
-
-
     def build_single_message(self, role, metadata, message):
         assert role in ["system", "user", "assistant", "observation"], role
         role_tokens = [self.tokenizer.get_command(f"<|{role}|>")] + self.tokenizer.encode(f"{metadata}\n")
@@ -80,7 +78,6 @@ class TokenIdsMaker:
         return metadata, content, history
 
     def trunction(self, tokenizer: ChatGLMTokenizer,config, examples, max_seq_length,sup=True):
-
         ds = []
         history = []
         for sid, (q_role,q,a) in enumerate(examples):
@@ -90,8 +87,13 @@ class TokenIdsMaker:
                     "content": q,
                 }]
                 continue
+
             metadata, content, history = self.parse_history_from_answers(a,history)
             a_ids = self.build_chat_input(q,history=history)
+            history += [ {
+                "role": "user",
+                "content": q,
+            } ]
             b_ids = self.tokenizer.encode(content)
             role_tokens = [ self.tokenizer.get_command("<|assistant|>") ] + self.tokenizer.encode(f"{metadata}\n")
             while len(a_ids) + len(b_ids) > max_seq_length - len(role_tokens) - 2:
