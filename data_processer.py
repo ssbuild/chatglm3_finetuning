@@ -94,7 +94,7 @@ class TokenIdsMaker:
             } ]
             metadata, content, history = self.parse_history_from_answers(a,history)
             a_ids = self.build_chat_input(query=None,history=history)
-            b_ids = self.tokenizer.encode(content)
+            b_ids = self.tokenizer.encode(content,is_split_into_words=True)
             role_tokens = [ self.tokenizer.get_command("<|assistant|>") ] + self.tokenizer.encode(f"{metadata}\n")
             while len(a_ids) + len(b_ids) > max_seq_length - len(role_tokens) - 2:
                 if len(b_ids) > len(a_ids):
