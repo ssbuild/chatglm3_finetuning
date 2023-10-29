@@ -56,15 +56,22 @@ x1 = [
     {
         "role": "assistant",
         "metadata": "",
-        "content": """好的，让我们来查看今天的天气
-<|assistant|>get_current_weather
+        "content": "好的，让我们来查看今天的天气"
+    },
+    {
+        "role": "assistant",
+        "metadata": "",
+        "content": """get_current_weather
 ```python
 tool_call(location="beijing", unit="celsius")
 ```
 <|observation|>
-{"temperature": 22}
-<|assistant|>
-根据查询结果，今天北京的气温为 22 摄氏度。"""
+{"temperature": 22}"""
+    },
+    {
+        "role": "assistant",
+        "metadata": "",
+        "content": "根据查询结果，今天北京的气温为 22 摄氏度。"
     },
 ]
 
@@ -88,10 +95,7 @@ x2 = [
     {
         "role": "assistant",
         "metadata": "",
-        "content": """首先，我将读取您提供的文件，并查看其内容以确定是否存在缺失值或异常值。
-
-我们从加载文件开始：
-<|assistant|>interpreter
+        "content": """interpreter
 ```python
 import json
 
@@ -127,16 +131,24 @@ data[:5]
   'type': 'survivor',
   'description': 'Your acute senses are on high alert.'}]
 ```
-<|assistant|>
-该文件看起来包含有关某些条目的元数据，每个条目有以下字段：
+"""
+    },
+    {
+        "role": "assistant",
+        "metadata": "",
+        "content": """该文件看起来包含有关某些条目的元数据，每个条目有以下字段：
 
 - `file_name`: 文件名称
 - `name`: 名称
 - `type`: 类型（例如 "survivor" 或 "killer"）
 - `description`: 描述
 
-接下来，我将检查这些字段是否存在缺失值。
-<|assistant|>interpreter
+接下来，我将检查这些字段是否存在缺失值。"""
+    },
+    {
+        "role": "assistant",
+        "metadata": "",
+        "content": """interpreter
 ```python
 # Check for missing values in each column
 missing_values = {key: sum(1 for item in data if key not in item) for key in data[0].keys()}
@@ -146,12 +158,20 @@ missing_values
 <|observation|>
 ```result
 {'file_name': 0, 'name': 0, 'type': 0, 'description': 0}
-```
-<|assistant|>
-每个字段都没有缺失值。这意味着每个条目都完整。
+```"""
+    },
+    {
+        "role": "assistant",
+        "metadata": "",
+        "content": """每个字段都没有缺失值。这意味着每个条目都完整。
 
 接下来，我们可以检查是否存在任何潜在的异常值。这通常需要更深入的分析和对数据的了解，但我可以从一些基本的统计和分布开始进行检查。为了这样做，我们可以查看“type”字段的值分布，看看是否有任何意外的类别。
-<|assistant|>interpreter
+"""
+    },
+    {
+        "role": "assistant",
+        "metadata": "",
+        "content": """interpreter
 ```python
 # Check the distribution of values in the 'type' column
 type_distribution = {key: sum(1 for item in data if item['type'] == key) for key in set(item['type'] for item in data)}
@@ -161,16 +181,17 @@ type_distribution
 <|observation|>
 ```result
 {'survivor': 116, 'killer': 103}
-```
-<|assistant|>
-“type”字段有两个值：“survivor”和“killer”。其中，“survivor”有116个条目，而“killer”有103个条目。
+```"""
+    },
+    {
+        "role": "assistant",
+        "metadata": "",
+        "content": """“type”字段有两个值：“survivor”和“killer”。其中，“survivor”有116个条目，而“killer”有103个条目。
 
 从这个初步的检查中，我们没有发现任何明显的异常值。
 
-如果您有任何特定的标准或其他字段需要检查，我可以为您提供更详细的分析。您还希望我检查什么呢？
-"""
+如果您有任何特定的标准或其他字段需要检查，我可以为您提供更详细的分析。您还希望我检查什么呢？"""
     },
-
     {
         "role": "user",
         "metadata": "",
@@ -202,11 +223,13 @@ plt.show()
 <|observation|>
 ```result
 【image】
-```
-<|assistant|>
-这是一个爱心形状。我使用了参数方程来描述这个形状，并使用matplotlib进行了绘制。如果您有任何其他需求或问题，请随时告诉我。
 ```"""
     },
+    {
+        "role": "assistant",
+        "metadata": "",
+        "content": """这是一个爱心形状。我使用了参数方程来描述这个形状，并使用matplotlib进行了绘制。如果您有任何其他需求或问题，请随时告诉我。"""
+    }
 ]
 
 
