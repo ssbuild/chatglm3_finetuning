@@ -30,6 +30,7 @@ pip install -U transformers>=4.30 deepspeed xformers bitsandbytes>=0.39 accelera
 - open_data https://github.com/ssbuild/open_data
 - [prompt](PROMPT.md)
 
+```text
 数据示例
 例子依次分别是 对话，工具，代码执行，对话，对话
 
@@ -37,6 +38,7 @@ pip install -U transformers>=4.30 deepspeed xformers bitsandbytes>=0.39 accelera
 role: 可选字段，system 标识是否为 system prompt , system prompt a 空
 q: 问题
 a: 回答
+```
 
 ```json
 {"id": 1, "paragraph": [{"role": "system", "q": "You are ChatGLM3, a large language model trained by Zhipu.AI. Follow the user's instructions carefully. Respond using markdown.", "a": ""}, {"q": "Hello", "a": "Hello, I'm ChatGLM3. What can I assist you today?"}]}
