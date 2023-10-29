@@ -13,10 +13,15 @@ class DataStrategy(Enum):
     siding = 2
 
 class TokenIdsMaker:
-
-    def __init__(self,tokenizer: ChatGLMTokenizer , config):
+    def __init__(self,tokenizer: ChatGLMTokenizer, config):
         self.tokenizer = tokenizer
         self.config = config
+        self.bos_token_id = self.tokenizer.get_command("<bos>")
+        self.pad_token_id = self.tokenizer.get_command("<pad>")
+        self.eos_token_id = self.tokenizer.get_command("<eos>")
+
+
+
     def build_single_message(self, role, metadata, message):
         assert role in ["system", "user", "assistant", "observation"], role
         role_tokens = [self.tokenizer.get_command(f"<|{role}|>")] + self.tokenizer.encode(f"{metadata}\n")
@@ -24,15 +29,6 @@ class TokenIdsMaker:
         tokens = role_tokens + message_tokens
         return tokens
 
-    def build_template_ids(self, messages,max_seq_length):
-        input_ids = []
-        for idx,item in enumerate(messages):
-            content = item["content"]
-            if item["role"] == "system" and "tools" in item:
-                content = content + "\n" + json.dumps(item["tools"], indent=4, ensure_ascii=False)
-            input_ids.extend(self.build_single_message(item["role"], item.get("metadata", ""), content))
-        input_ids = [self.tokenizer.get_command("<bos>")] + self.tokenizer.encode(input_ids, is_split_into_words=True)[-(max_seq_length-1):]
-        return input_ids
     @classmethod
     def final(cls, input_ids: typing.List, labels, max_seq_length, tokenizer):
         input_ids = np.asarray(input_ids, dtype=np.int32)
@@ -52,15 +48,66 @@ class TokenIdsMaker:
         }
         return d
 
-    def trunction(cls, tokenizer: ChatGLMTokenizer,config, messages, max_seq_length,sup=True):
+
+    def build_chat_input(self, query, history=None, role="user"):
+        if history is None:
+            history = []
+        input_ids = []
+        for item in history:
+            content = item["content"]
+            if item["role"] == "system" and "tools" in item:
+                content = content + "\n" + json.dumps(item["tools"], indent=4, ensure_ascii=False)
+            input_ids.extend(self.build_single_message(item["role"], item.get("metadata", ""), content))
+        input_ids.extend(self.build_single_message(role, "", query))
+        return self.tokenizer.encode(input_ids,  is_split_into_words=True)
+
+    def parse_history_from_answers(self, output, history):
+        content = ""
+        metadata = ""
+        history = copy.deepcopy(history)
+        for response in output.split("<|assistant|>"):
+            content = response.split("\n", maxsplit=1)
+            if len(content) == 2:
+                metadata = content[0]
+            content = content[-1]
+            # metadata, content = response.split("\n", maxsplit=1)
+            if not metadata.strip():
+                content = content.strip()
+                history.append({"role": "assistant", "metadata": metadata, "content": content})
+                content = content.replace("[[训练时间]]", "2023年")
+            else:
+                history.append({"role": "assistant", "metadata": metadata, "content": content})
+        return metadata, content, history
+
+    def trunction(self, tokenizer: ChatGLMTokenizer,config, examples, max_seq_length,sup=True):
+
         ds = []
-        for sid, message in enumerate(messages):
-            if message["role"] == "assistant":
-                history = messages[:sid + 1]
-                input_ids = cls.build_template_ids(history,max_seq_length)
-                labels = copy.deepcopy(input_ids)
-                assert len(input_ids) <= max_seq_length
-                ds.append(cls.final(input_ids, labels, max_seq_length, tokenizer))
+        history = []
+        for sid, (q_role,q,a) in enumerate(examples):
+            if q_role == "system":
+                history += {
+                    "role": "system",
+                    "content": q,
+                }
+            metadata, content, history = self.parse_history_from_answers(a,history)
+            a_ids = self.build_chat_input(q,history=history)
+            b_ids = self.tokenizer.encode(content)
+            role_tokens = [ self.tokenizer.get_command("<|assistant|>") ] + self.tokenizer.encode(f"{metadata}\n")
+            while len(a_ids) + len(b_ids) > max_seq_length - len(role_tokens) - 2:
+                if len(b_ids) > len(a_ids):
+                    b_ids.pop(-1)
+                else:
+                    a_ids.pop(0)
+            assert len(b_ids) > 0
+            b_ids += [ self.eos_token_id ]
+            a_ids = a_ids + role_tokens
+            input_ids = a_ids + b_ids
+            labels = copy.deepcopy(input_ids) if not sup else [ -100 ] * len(a_ids) + copy.deepcopy(b_ids)
+            input_ids = [self.bos_token_id] + input_ids
+            labels = [self.bos_token_id] + labels if not sup else [ -100 ]  + labels
+            assert len(input_ids) <= max_seq_length
+            ds.append(self.final(input_ids, labels, max_seq_length, tokenizer))
+
         return ds
 
 
