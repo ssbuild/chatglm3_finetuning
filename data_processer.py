@@ -103,7 +103,9 @@ class TokenIdsMaker:
                     a_ids.pop(0)
             assert len(b_ids) > 0
             b_ids += [ self.eos_token_id ]
-            a_ids = a_ids + role_tokens
+            a_ids = a_ids
+            # ensure answer format
+            b_ids = role_tokens + b_ids
             input_ids = a_ids + b_ids
             labels = copy.deepcopy(input_ids) if not sup else [ -100 ] * len(a_ids) + copy.deepcopy(b_ids)
             input_ids = [self.bos_token_id] + input_ids
