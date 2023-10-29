@@ -60,9 +60,8 @@ x1 = [
     },
     {
         "role": "assistant",
-        "metadata": "",
-        "content": """get_current_weather
-```python
+        "metadata": "get_current_weather",
+        "content": """```python
 tool_call(location="beijing", unit="celsius")
 ```
 <|observation|>
@@ -71,7 +70,7 @@ tool_call(location="beijing", unit="celsius")
     {
         "role": "assistant",
         "metadata": "",
-        "content": "根据查询结果，今天北京的气温为 22 摄氏度。"
+        "content": "根据查询结果， 今天北京的气温为22 摄氏度。"
     },
 ]
 
@@ -94,9 +93,8 @@ x2 = [
     },
     {
         "role": "assistant",
-        "metadata": "",
-        "content": """interpreter
-```python
+        "metadata": "interpreter",
+        "content": """```python
 import json
 
 # Load the uploaded file
@@ -135,9 +133,8 @@ data[:5]
     },
     {
         "role": "assistant",
-        "metadata": "",
-        "content": """该文件看起来包含有关某些条目的元数据，每个条目有以下字段：
-
+        "metadata": "该文件看起来包含有关某些条目的元数据，每个条目有以下字段：",
+        "content": """
 - `file_name`: 文件名称
 - `name`: 名称
 - `type`: 类型（例如 "survivor" 或 "killer"）
@@ -147,9 +144,8 @@ data[:5]
     },
     {
         "role": "assistant",
-        "metadata": "",
-        "content": """interpreter
-```python
+        "metadata": "interpreter",
+        "content": """```python
 # Check for missing values in each column
 missing_values = {key: sum(1 for item in data if key not in item) for key in data[0].keys()}
 
@@ -162,17 +158,15 @@ missing_values
     },
     {
         "role": "assistant",
-        "metadata": "",
-        "content": """每个字段都没有缺失值。这意味着每个条目都完整。
-
+        "metadata": "每个字段都没有缺失值。这意味着每个条目都完整。",
+        "content": """
 接下来，我们可以检查是否存在任何潜在的异常值。这通常需要更深入的分析和对数据的了解，但我可以从一些基本的统计和分布开始进行检查。为了这样做，我们可以查看“type”字段的值分布，看看是否有任何意外的类别。
 """
     },
     {
         "role": "assistant",
-        "metadata": "",
-        "content": """interpreter
-```python
+        "metadata": "interpreter",
+        "content": """```python
 # Check the distribution of values in the 'type' column
 type_distribution = {key: sum(1 for item in data if item['type'] == key) for key in set(item['type'] for item in data)}
 
@@ -185,9 +179,8 @@ type_distribution
     },
     {
         "role": "assistant",
-        "metadata": "",
-        "content": """“type”字段有两个值：“survivor”和“killer”。其中，“survivor”有116个条目，而“killer”有103个条目。
-
+        "metadata": "“type”字段有两个值：“survivor”和“killer”。其中，“survivor”有116个条目，而“killer”有103个条目。",
+        "content": """
 从这个初步的检查中，我们没有发现任何明显的异常值。
 
 如果您有任何特定的标准或其他字段需要检查，我可以为您提供更详细的分析。您还希望我检查什么呢？"""
@@ -199,9 +192,8 @@ type_distribution
     },
     {
         "role": "assistant",
-        "metadata": "",
-        "content": """interpreter
-```python
+        "metadata": "interpreter",
+        "content": """```python
 import numpy as np
 import matplotlib.pyplot as plt
 
