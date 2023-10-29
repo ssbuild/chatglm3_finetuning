@@ -85,10 +85,10 @@ class TokenIdsMaker:
         history = []
         for sid, (q_role,q,a) in enumerate(examples):
             if q_role == "system":
-                history += {
+                history += [{
                     "role": "system",
                     "content": q,
-                }
+                }]
                 continue
             metadata, content, history = self.parse_history_from_answers(a,history)
             a_ids = self.build_chat_input(q,history=history)
