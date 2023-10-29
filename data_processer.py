@@ -65,16 +65,10 @@ class TokenIdsMaker:
         metadata = ""
         history = copy.deepcopy(history)
         for response in output.split("<|assistant|>"):
-            item = response.split("\n", maxsplit=1)
-            if len(item) == 2:
-                if item[0].find("interpreter") != -1:
-                    metadata = item[ 0 ]
-                    content = item[ 1 ]
-                else:
-                    content = response
-            else:
-                content = response
-            # metadata, content = response.split("\n", maxsplit=1)
+            #ensure 语料包含换行符 格式为{metadata}\n{content}
+            if response.find('\n') == -1:
+                response = '\n' + response
+            metadata, content = response.split("\n", maxsplit=1)
             if not metadata.strip():
                 content = content.strip()
                 history.append({"role": "assistant", "metadata": metadata, "content": content})
