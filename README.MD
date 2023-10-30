@@ -38,7 +38,7 @@ pip install -U transformers>=4.30 deepspeed xformers bitsandbytes>=0.39 accelera
 
 数组组成 
 tools:  工具函数,可选字段(str)，为 json.dumps 序列化后的字符串，参考 data/make_data_example.py 
-role: 可选字段(str)，system 标识是否为 system prompt , system prompt a 空
+role: 可选字段(str) 标志 q字段 角色, one of user system, observation ，system 标识是否为 system prompt , system prompt a 空 
 tools 和 role 只用于会话开始，之后的多轮回话不使用。不是函数 ，tools键值不应存在。
 q: 问题
 a: 回答
