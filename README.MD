@@ -44,7 +44,7 @@ q: 问题
 a: 回答
 
 注意事项， 如果是聊天语料 语料起始位置为换行符 格式为{metadata}\n{content} ， metadata 对于聊天数据为空字符串
-如果是工具函数，metadata 一般为函数名或者 interpreter ，详细参考(assets/PROMPT.md),(assets/PROMPT.md)
+如果是工具函数，metadata 一般为函数名或者 interpreter ，详细参考(assets/PROMPT.md),(assets/TOOLS.md)
  
 ```
 
