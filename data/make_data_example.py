@@ -12,8 +12,9 @@ x0 = [
         "a": ""
     },
     {
+        "role": "user",
         "q": "Hello",
-        "a": "\nHello, I'm ChatGLM3. What can I assist you today?"
+        "a": "Hello, I'm ChatGLM3. What can I assist you today?"
     }
 ]
 
@@ -23,9 +24,9 @@ x0 = [
 x1 = [
     {
         "role": "system",
-        "q": """Answer the following questions as best as you can. You have access to the following tools:\n""",
+        "q": """Answer the following questions as best as you can. You have access to the following tools:""",
         "tools": """
-        [
+[
     {
         "name": "get_current_weather",
         "description": "Get the current weather in a given location",
@@ -46,18 +47,19 @@ x1 = [
         "a": ""
     },
     {
+        "role": "user",
         "q": "今天北京的天气怎么样？",
-        "a": """\n好的，让我们来查看今天的天气
+        "a": """好的，让我们来查看今天的天气
 <|assistant|>get_current_weather
 ```python
 tool_call(location="beijing", unit="celsius")
 ```
-<|observation|>
-{"temperature": 22}
-<|assistant|>
-根据查询结果，今天北京的气温为 22 摄氏度。"""
-    },
-
+"""},
+    {
+        "role": "observation",
+        "q": '{"temperature": 22}',
+        "a": "根据查询结果，今天北京的气温为 22 摄氏度。"
+    }
 ]
 
 
@@ -70,6 +72,7 @@ x2 = [
         "a": ""
     },
     {
+        "role": "user",
         "q": """#File: /mnt/data/metadata.jsonl
 #Size: 35380
 #File uploaded
@@ -90,8 +93,11 @@ with open("/mnt/data/metadata.jsonl", 'r') as file:
 # Display the first few records to get a sense of the data
 data[:5]
 ```
-<|observation|>
-```result
+"""
+    },
+    {
+        "role": "observation",
+        "q": """
 [{'file_name': 'aceinthehole.png',
   'name': 'Ace in the Hole',
   'type': 'survivor',
@@ -112,8 +118,8 @@ data[:5]
   'name': 'Alert',
   'type': 'survivor',
   'description': 'Your acute senses are on high alert.'}]
-```
-<|assistant|>
+        """,
+        "a": """
 该文件看起来包含有关某些条目的元数据，每个条目有以下字段：
 
 - `file_name`: 文件名称
@@ -129,11 +135,12 @@ missing_values = {key: sum(1 for item in data if key not in item) for key in dat
 
 missing_values
 ```
-<|observation|>
-```result
-{'file_name': 0, 'name': 0, 'type': 0, 'description': 0}
-```
-<|assistant|>
+"""
+        },
+        {
+            "role": "observation",
+            "q": "{'file_name': 0, 'name': 0, 'type': 0, 'description': 0}",
+            "a": """
 每个字段都没有缺失值。这意味着每个条目都完整。
 
 接下来，我们可以检查是否存在任何潜在的异常值。这通常需要更深入的分析和对数据的了解，但我可以从一些基本的统计和分布开始进行检查。为了这样做，我们可以查看“type”字段的值分布，看看是否有任何意外的类别。
@@ -143,20 +150,24 @@ missing_values
 type_distribution = {key: sum(1 for item in data if item['type'] == key) for key in set(item['type'] for item in data)}
 
 type_distribution
-```
-<|observation|>
-```result
-{'survivor': 116, 'killer': 103}
-```
-<|assistant|>
+            """
+        },
+        {
+             "role": "observation",
+             "q": "{'survivor': 116, 'killer': 103}",
+             "a": """
 “type”字段有两个值：“survivor”和“killer”。其中，“survivor”有116个条目，而“killer”有103个条目。
 
 从这个初步的检查中，我们没有发现任何明显的异常值。
 
-如果您有任何特定的标准或其他字段需要检查，我可以为您提供更详细的分析。您还希望我检查什么呢？"""
-    },
+如果您有任何特定的标准或其他字段需要检查，我可以为您提供更详细的分析。您还希望我检查什么呢？
+             """
+        },
+
+
 
     {
+        "role": "user",
         "q": "帮我画一个爱心",
         "a": """interpreter
 ```python
@@ -178,12 +189,12 @@ plt.axis('equal')
 plt.axis('off')
 plt.show()
 ```
-<|observation|>
-```result
-【image】
-```
-<|assistant|>
-这是一个爱心形状。我使用了参数方程来描述这个形状，并使用matplotlib进行了绘制。如果您有任何其他需求或问题，请随时告诉我。"""
+"""
+    },
+    {
+        "role": "observation",
+        "q": "【image】",
+        "a": "这是一个爱心形状。我使用了参数方程来描述这个形状，并使用matplotlib进行了绘制。如果您有任何其他需求或问题，请随时告诉我。"
     }
 ]
 
@@ -191,8 +202,9 @@ plt.show()
 
 x3 = [
     {
+        "role": "user",
         "q": "写一个诗歌，关于冬天",
-        "a": "\n" + '\n'.join([
+        "a": '\n'.join([
             "冬夜寂静冷，",
             "云在天边飘，", "冰封白雪上， ", "寒冷像一场雪。",
             " ",
@@ -212,8 +224,9 @@ x3 = [
 
 x4 = [
     {
+        "role": "user",
         "q": "晚上睡不着应该怎么办",
-        "a": "\n" + '\n'.join([
+        "a": '\n'.join([
             "晚上睡不着可能会让你感到焦虑或不舒服,但以下是一些可以帮助你入睡的方法:",
             "",
             "1. 制定规律的睡眠时间表:保持规律的睡眠时间表可以帮助你建立健康的睡眠习惯,使你更容易入睡。尽量在每天的相同时间上床,并在同一时间起床。",
