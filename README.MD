@@ -30,7 +30,7 @@ pip install -U transformers>=4.30 deepspeed xformers bitsandbytes>=0.39 accelera
 ## data sample
 - open_data https://github.com/ssbuild/open_data
 - [prompt](assets/PROMPT.md)
-- [tools prompt](assets/PROMPT.md)
+- [tools prompt](assets/TOOLS.md)
 
 ```text
 数据示例
@@ -43,7 +43,8 @@ tools 和 role 只用于会话开始，之后的多轮回话不使用。不是�
 q: 问题
 a: 回答
 
-注意事项， 如果是聊天语料 语料起始位置为换行符 格式为{metadata}\n{content} ， metadata 对于聊天数据为空字符串
+注意事项， a的格式为 格式为{metadata}\n{content}
+如果是聊天语料 语料起始位置为换行符 格式为{metadata}\n{content} ， metadata 对于聊天数据为空字符串
 如果是工具函数，metadata 一般为函数名或者 interpreter ，详细参考(assets/PROMPT.md),(assets/TOOLS.md)
  
 ```
