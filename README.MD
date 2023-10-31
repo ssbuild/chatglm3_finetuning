@@ -58,6 +58,14 @@ a字段：对于普通聊天，a即为回答。
 ```
 
 
+## aigc-serving
+
+部署chatglm3之后 ， 可以通过 
+[test_chatglm3_tools.py](https://github.com/ssbuild/aigc_serving/blob/main/tests/test_chatglm3_tools.py)
+[test_chatglm3_code.py](https://github.com/ssbuild/aigc_serving/blob/main/tests/test_chatglm3_code.py)
+
+体验tools 和 code 功能
+
 ## infer
     # infer.py 推理预训练模型
     # infer_finetuning.py 推理微调模型
