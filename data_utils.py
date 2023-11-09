@@ -142,7 +142,7 @@ class NN_DataHelper(DataHelper):
                     a = ""
                     sub.append((role,q,a))
                     continue
-                assert role in m["from"] in ['user','observation','observation']
+                assert role in m["from"] in ['user','observation','function']
                 m = conversations[cid]
                 cid += 1
                 assert m["from"] == "assistant"
