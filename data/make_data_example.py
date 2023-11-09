@@ -24,8 +24,7 @@ x0 = [
 x1 = [
     {
         "role": "system",
-        "q": """Answer the following questions as best as you can. You have access to the following tools:""",
-        "tools": """
+        "q": """Answer the following questions as best as you can. You have access to the following tools:
 [
     {
         "name": "get_current_weather",
@@ -248,14 +247,45 @@ x4 = [
 
 x = [x0,x1,x2,x3,x4]
 
-with open('./finetune_train_examples.json',mode='w',encoding='utf-8',newline='\n') as f:
+with open('./finetune_train_paragraph.json',mode='w',encoding='utf-8',newline='\n') as f:
     index = 0
-    for i in range(100):
+    for i in range(50):
         for j in range(len(x)):
             index += 1
 
             conversations = {
                 "id": index,
                 "paragraph": x[j]
+            }
+            f.write(json.dumps(conversations,ensure_ascii=False) + '\n' )
+
+
+with open('./finetune_train_conversations.json',mode='w',encoding='utf-8',newline='\n') as f:
+    index = 0
+    for i in range(50):
+        for j in range(len(x)):
+            index += 1
+
+            conversation = []
+            for item in x[j]:
+                role = item.get("role","user")
+                if role == "system":
+                    conversation.append( {
+                        "from":  item.get("role","user"),
+                        "value": item["q"]
+                    })
+                else:
+                    conversation.append({
+                        "from": item.get("role", "user"),
+                        "value": item["q"]
+                    })
+                    conversation.append({
+                        "from": "assistant",
+                        "value": item["a"]
+                    })
+
+            conversations = {
+                "id": index,
+                "conversations": conversation
             }
             f.write(json.dumps(conversations,ensure_ascii=False) + '\n' )
