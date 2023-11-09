@@ -53,9 +53,6 @@ class TokenIdsMaker:
         input_ids = []
         for item in history:
             content = item["content"]
-            if item["role"] == "system" and "tools" in item:
-                tools_str = item["tools"] if isinstance(item[ "tools" ],str) else json.dumps(item["tools"], indent=4, ensure_ascii=False)
-                content = content + "\n" + tools_str
             input_ids.extend(self.build_single_message(item["role"], item.get("metadata", ""), content))
         if query is not None:
             input_ids.extend(self.build_single_message(role, "", query))
@@ -78,7 +75,6 @@ class TokenIdsMaker:
             if not metadata.strip():
                 content = content.strip()
                 history.append({"role": "assistant", "metadata": metadata, "content": content})
-                content = content.replace("[[训练时间]]", "2023年")
             else:
                 history.append({"role": "assistant", "metadata": metadata, "content": content})
         return metadata, content, history
@@ -86,16 +82,17 @@ class TokenIdsMaker:
     def trunction(self, tokenizer: ChatGLMTokenizer,config, examples, max_seq_length,sup=True):
         ds = []
         history = []
-        for sid, (q_role,tools,q,a) in enumerate(examples):
+        for sid, (q_role,q,a) in enumerate(examples):
             if q_role == "system":
                 prefix = {
                     "role": "system",
                     "content": q,
                 }
-                if tools is not None:
-                    prefix["tools"] = tools
                 history += [prefix]
                 continue
+            if q_role == "function":
+                q_role = "observation"
+
             if q_role != "observation":
                 q_role = "user"
             history += [ {
