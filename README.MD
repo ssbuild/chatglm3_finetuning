@@ -28,12 +28,12 @@ pip install -U transformers>=4.30 deepspeed xformers bitsandbytes>=0.39 accelera
 
 
 ## data sample
-- open_data https://github.com/ssbuild/open_data
+- open_data 不定时开放新数据 https://github.com/ssbuild/open_data
 - [prompt](assets/PROMPT.md)
 - [tools prompt](assets/TOOLS.md)
 
 ```text
-数据示例
+支持两种数据格式示例如下
 例子依次分别是 对话，工具，代码执行，对话，对话
 
 数组组成 
@@ -54,7 +54,8 @@ a字段：对于普通聊天，a即为回答。
 {"id": 4, "paragraph": [{"role": "user", "q": "写一个诗歌，关于冬天", "a": "冬夜寂静冷，\n云在天边飘，\n冰封白雪上， \n寒冷像一场雪。\n \n雪花融化成冰，\n像那雪花飘洒，\n在寒冷的冬天，\n感受春天的喜悦。\n 冬日里，\n风雪渐消，\n一片寂静，\n把快乐和温暖带回家。"}]}
 {"id": 5, "paragraph": [{"role": "user", "q": "晚上睡不着应该怎么办", "a": "晚上睡不着可能会让你感到焦虑或不舒服,但以下是一些可以帮助你入睡的方法:\n\n1. 制定规律的睡眠时间表:保持规律的睡眠时间表可以帮助你建立健康的睡眠习惯,使你更容易入睡。尽量在每天的相同时间上床,并在同一时间起床。\n2. 创造一个舒适的睡眠环境:确保睡眠环境舒适,安静,黑暗且温度适宜。可以使用舒适的床上用品,并保持房间通风。\n3. 放松身心:在睡前做些放松的活动,例如泡个热水澡,听些轻柔的音乐,阅读一些有趣的书籍等,有助于缓解紧张和焦虑,使你更容易入睡。\n4. 避免饮用含有咖啡因的饮料:咖啡因是一种刺激性物质,会影响你的睡眠质量。尽量避免在睡前饮用含有咖啡因的饮料,例如咖啡,茶和可乐。\n5. 避免在床上做与睡眠无关的事情:在床上做些与睡眠无关的事情,例如看电影,玩游戏或工作等,可能会干扰你的睡眠。\n6. 尝试呼吸技巧:深呼吸是一种放松技巧,可以帮助你缓解紧张和焦虑,使你更容易入睡。试着慢慢吸气,保持几秒钟,然后缓慢呼气。\n\n如果这些方法无法帮助你入睡,你可以考虑咨询医生或睡眠专家,寻求进一步的建议。"}]}
 ```
-or
+
+或者
 
 ```json
 {"id": 1, "conversations": [{"from": "system", "value": "You are ChatGLM3, a large language model trained by Zhipu.AI. Follow the user's instructions carefully. Respond using markdown."}, {"from": "user", "value": "Hello"}, {"from": "assistant", "value": "Hello, I'm ChatGLM3. What can I assist you today?"}]}
@@ -68,8 +69,8 @@ or
 ## aigc-serving
 
 部署chatglm3之后 ， 可以通过 
-[test_chatglm3_tools.py](https://github.com/ssbuild/aigc_serving/blob/main/tests/test_chatglm3_tools.py)
-[test_chatglm3_code.py](https://github.com/ssbuild/aigc_serving/blob/main/tests/test_chatglm3_code.py)
+- [test_chatglm3_tools.py](https://github.com/ssbuild/aigc_serving/blob/main/tests/test_chatglm3_tools.py)
+- [test_chatglm3_code.py](https://github.com/ssbuild/aigc_serving/blob/main/tests/test_chatglm3_code.py)
 
 体验tools 和 code 功能
 
@@ -92,25 +93,25 @@ or
 
 ## training
 ```text
-    # 制作数据
-    cd scripts
-    bash train_full.sh -m dataset 
-    or
-    bash train_lora.sh -m dataset 
-    or
-    bash train_ptv2.sh -m dataset 
+# 制作数据
+cd scripts
+bash train_full.sh -m dataset 
+or
+bash train_lora.sh -m dataset 
+or
+bash train_ptv2.sh -m dataset 
+
+注: num_process_worker 为多进程制作数据 ， 如果数据量较大 ， 适当调大至cpu数量
+dataHelper.make_dataset_with_args(data_args.train_file,mixed_data=False, shuffle=True,mode='train',num_process_worker=0)
+
+# 全参数训练 
+    bash train_full.sh -m train 
     
-    注: num_process_worker 为多进程制作数据 ， 如果数据量较大 ， 适当调大至cpu数量
-    dataHelper.make_dataset_with_args(data_args.train_file,mixed_data=False, shuffle=True,mode='train',num_process_worker=0)
+# lora adalora ia3 
+    bash train_lora.sh -m train 
     
-    # 全参数训练 
-        bash train_full.sh -m train 
-        
-    # lora adalora ia3 
-        bash train_lora.sh -m train 
-        
-    # ptv2
-        bash train_ptv2.sh -m train 
+# ptv2
+    bash train_ptv2.sh -m train 
 ```
 
 ## 训练参数
